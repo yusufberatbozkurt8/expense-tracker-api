@@ -87,6 +87,32 @@ src/main/java/com/yusufberat/expensetracker/
 mvn test
 ```
 
+## Güvenlik
+
+| Konu | Uygulama |
+|------|----------|
+| Kimlik doğrulama | `X-API-Key` başlığı (Spring Security, stateless) |
+| H2 Console | Kapalı (üretim ve geliştirme) |
+| Hata yanıtları | Stack trace / iç mesaj gizli; `GlobalExceptionHandler` |
+| Girdi doğrulama | `@Valid`, alan uzunluk limitleri, yıl/ay sınırları |
+| Swagger | Yalnızca `dev` profilinde açık |
+
+**Yerel çalıştırma (dev profili):**
+
+```bash
+set API_KEY=dev-only-change-me
+mvn spring-boot:run
+```
+
+**İstek örneği:**
+
+```http
+GET /api/v1/expenses
+X-API-Key: dev-only-change-me
+```
+
+Üretimde güçlü bir `API_KEY` ortam değişkeni kullanın; varsayılan anahtarı asla canlıya almayın.
+
 ## Portföy notu
 
 Bu proje, staj ve iş başvurularında **mali işler otomasyonu** ve **Spring Boot REST** yetkinliğini göstermek için tasarlanmıştır. Gerçek ortamda PostgreSQL ve Spring Security ile genişletilebilir.

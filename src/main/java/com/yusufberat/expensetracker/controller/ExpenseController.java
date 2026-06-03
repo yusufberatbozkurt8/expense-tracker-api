@@ -6,7 +6,11 @@ import com.yusufberat.expensetracker.dto.MonthlyReportResponse;
 import com.yusufberat.expensetracker.model.ExpenseCategory;
 import com.yusufberat.expensetracker.service.ExpenseService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/expenses")
+@Validated
 public class ExpenseController {
 
     private final ExpenseService expenseService;
@@ -45,25 +50,27 @@ public class ExpenseController {
     }
 
     @GetMapping("/{id}")
-    public ExpenseResponse get(@PathVariable Long id) {
+    public ExpenseResponse get(@PathVariable @Positive Long id) {
         return expenseService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public ExpenseResponse update(@PathVariable Long id, @Valid @RequestBody ExpenseRequest request) {
+    public ExpenseResponse update(
+            @PathVariable @Positive Long id,
+            @Valid @RequestBody ExpenseRequest request) {
         return expenseService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable @Positive Long id) {
         expenseService.delete(id);
     }
 
     @GetMapping("/reports/monthly")
     public MonthlyReportResponse monthlyReport(
-            @RequestParam int year,
-            @RequestParam int month) {
+            @RequestParam @Min(2000) @Max(2100) int year,
+            @RequestParam @Min(1) @Max(12) int month) {
         return expenseService.monthlyReport(year, month);
     }
 }
